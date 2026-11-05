@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="te">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VENKAT ENTERPRISES – Stock Manager</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Noto Sans Telugu",sans-serif;color:#172033;background:#f3f5f9}
+*{box-sizing:border-box}body{margin:0}.top{background:#142b4a;color:white;padding:22px 16px}
+.top h1{font-size:21px;margin:0 0 5px}.top p{margin:0;color:#d8e5f5;font-size:13px}
+main{max-width:900px;margin:auto;padding:14px}.tabs{display:flex;gap:7px;overflow:auto;margin-bottom:12px}
+button,.tab{border:0;border-radius:9px;padding:10px 13px;background:#e2e8f0;color:#172033;font-weight:600;cursor:pointer;white-space:nowrap}
+.tab.active,button.primary{background:#1769aa;color:white}.panel{background:white;padding:15px;border-radius:13px;margin-bottom:12px;box-shadow:0 2px 10px #142b4a0c}
+h2{font-size:18px;margin:0 0 12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
+label{display:block;font-size:13px;color:#536174}input,select{width:100%;padding:11px;border:1px solid #ccd5e1;border-radius:8px;margin:5px 0 10px;background:white;font:inherit}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row button{margin:3px 0}
+.stat{font-size:24px;font-weight:750}.muted{color:#65748a;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:9px 6px;border-bottom:1px solid #e7ebf1}th{color:#536174}
+.hidden{display:none}.danger{background:#fee2e2;color:#991b1b}.good{color:#087443}.scroll{overflow:auto}
+</style></head>
+<body>
+<header class="top"><h1>VENKAT ENTERPRISES</h1><p>సులభమైన స్టాక్ మేనేజ్‌మెంట్</p></header>
+<main>
+<div class="tabs">
+<button class="tab active" data-tab="home">డాష్‌బోర్డ్</button><button class="tab" data-tab="products">వస్తువులు</button><button class="tab" data-tab="move">స్టాక్ In / Out</button><button class="tab" data-tab="history">లావాదేవీలు</button><button class="tab" data-tab="backup">బ్యాకప్</button>
+</div>
+<section id="home" class="page">
+<div class="grid">
+<div class="panel"><div class="muted">వస్తువుల రకాలు</div><div class="stat" id="count">0</div></div>
+<div class="panel"><div class="muted">మొత్తం స్టాక్ (యూనిట్లు)</div><div class="stat" id="qty">0</div></div>
+<div class="panel"><div class="muted">తక్కువ స్టాక్ వస్తువులు</div><div class="stat" id="low">0</div></div>
+</div>
+<div class="panel"><h2>ప్రస్తుత స్టాక్</h2><div class="scroll"><table><thead><tr><th>వస్తువు</th><th>వివరాలు</th><th>మిగిలింది</th><th>యూనిట్</th></tr></thead><tbody id="stockRows"></tbody></table></div></div>
+</section>
+<section id="products" class="page hidden">
+<div class="panel"><h2>కొత్త వస్తువు నమోదు</h2>
+<form id="productForm"><div class="grid">
+<label>వస్తువు పేరు *<input required name="name" placeholder="ఉదా: UPVC Profile"></label>
+<label>వర్గం<select name="category"><option>UPVC</option><option>WPC Doors & Windows</option><option>Aluminium Mosquito Doors</option><option>Glass Materials</option><option>Hardware Materials</option><option>Glass Elevations & Covers</option><option>ఇతరాలు</option></select></label>
+<label>కలర్<input name="color" placeholder="White"></label><label>సైజు<input name="size" placeholder="10 Feet"></label>
+<label>యూనిట్<select name="unit"><option>Pieces</option><option>Feet</option><option>Square Feet</option><option>Boxes</option><option>Meters</option></select></label>
+<label>ప్రారంభ స్టాక్<input name="opening" type="number" min="0" step="any" value="0"></label>
+<label>కొనుగోలు ధర (₹)<input name="buy" type="number" min="0" step="any" value="0"></label>
+<label>అమ్మకం ధర (₹)<input name="sell" type="number" min="0" step="any" value="0"></label>
+<label>తక్కువ స్టాక్ హెచ్చరిక పరిమితి<input name="minimum" type="number" min="0" step="any" value="0"></label>
+</div><button class="primary">వస్తువును సేవ్ చేయండి</button></form></div>
+<div class="panel"><h2>వస్తువుల జాబితా</h2><div class="scroll"><table><thead><tr><th>పేరు</th><th>వర్గం</th><th>కలర్ / సైజు</th><th>స్టాక్</th><th></th></tr></thead><tbody id="productRows"></tbody></table></div></div>
+</section>
+<section id="move" class="page hidden"><div class="panel"><h2>స్టాక్ వచ్చినప్పుడు / అమ్మినప్పుడు</h2>
+<form id="moveForm"><div class="grid">
+<label>వస్తువు<select name="product" id="moveProduct" required></select></label>
+<label>రకం<select name="kind"><option value="IN">Stock In – వచ్చిన సరుకు</option><option value="OUT">Stock Out – అమ్మిన సరుకు</option></select></label>
+<label>పరిమాణం<input name="amount" type="number" min="0.01" step="any" required></label>
+<label>రేటు (₹)<input name="rate" type="number" min="0" step="any" value="0"></label>
+<label>తేదీ<input name="date" type="date" required></label><label>గమనిక<input name="note" placeholder="సప్లయర్ / కస్టమర్ పేరు"></label>
+</div><button class="primary">ఎంట్రీ సేవ్ చేయండి</button></form><p class="muted">Stock Out పరిమాణం ప్రస్తుతం ఉన్న స్టాక్ కంటే ఎక్కువగా ఉండకూడదు.</p></div></section>
+<section id="history" class="page hidden"><div class="panel"><h2>కొనుగోళ్లు & అమ్మకాల చరిత్ర</h2><div class="row"><button id="csv">CSV రిపోర్ట్ డౌన్‌లోడ్</button></div><div class="scroll"><table><thead><tr><th>తేదీ</th><th>వస్తువు</th><th>రకం</th><th>పరిమాణం</th><th>రేటు</th><th>గమనిక</th></tr></thead><tbody id="historyRows"></tbody></table></div></div></section>
+<section id="backup" class="page hidden"><div class="panel"><h2>డేటా బ్యాకప్</h2><p>మీ డేటా ఈ పరికరంలోని ఈ బ్రౌజర్‌లోనే సేవ్ అవుతుంది. ఫోన్ మార్చే ముందు లేదా తరచుగా బ్యాకప్ తీసుకోండి.</p><div class="row"><button class="primary" id="export">బ్యాకప్ డౌన్‌లోడ్</button><label>బ్యాకప్ ఫైల్‌ను తిరిగి లోడ్ చేయండి<input type="file" id="restore" accept=".json,application/json"></label></div><p class="muted">గమనిక: బ్రౌజర్ డేటా తొలగిస్తే బ్యాకప్ లేని వివరాలు పోవచ్చు.</p></div></section>
+</main>
+<script>
+const KEY='ve_stock_v1';let db=JSON.parse(localStorage.getItem(KEY)||'{"products":[],"moves":[]}');
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(db));render()};
+const num=n=>Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+function balance(p){return Number(p.opening||0)+db.moves.filter(m=>m.pid===p.id).reduce((s,m)=>s+(m.kind==='IN'?1:-1)*Number(m.amount),0)}
+function render(){
+document.getElementById('count').textContent=db.products.length;
+document.getElementById('qty').textContent=num(db.products.reduce((s,p)=>s+balance(p),0));
+document.getElementById('low').textContent=db.products.filter(p=>balance(p)<=Number(p.minimum||0)).length;
+document.getElementById('stockRows').innerHTML=db.products.map(p=>`<tr><td>${esc(p.name)}</td><td>${esc([p.color,p.size].filter(Boolean).join(' / '))}</td><td>${num(balance(p))}</td><td>${esc(p.unit)}</td></tr>`).join('')||'<tr><td colspan="4">ఇంకా వస్తువులు నమోదు చేయలేదు.</td></tr>';
+document.getElementById('productRows').innerHTML=db.products.map(p=>`<tr><td>${esc(p.name)}</td><td>${esc(p.category)}</td><td>${esc([p.color,p.size].filter(Boolean).join(' / '))}</td><td>${num(balance(p))} ${esc(p.unit)}</td><td><button class="danger" onclick="delProduct('${p.id}')">తొలగించు</button></td></tr>`).join('');
+document.getElementById('moveProduct').innerHTML=db.products.map(p=>`<option value="${p.id}">${esc(p.name)} (${num(balance(p))} ${esc(p.unit)})</option>`).join('');
+document.getElementById('historyRows').innerHTML=[...db.moves].reverse().map(m=>{let p=db.products.find(p=>p.id===m.pid);return `<tr><td>${esc(m.date)}</td><td>${esc(p?.name||'తొలగించిన వస్తువు')}</td><td>${m.kind==='IN'?'Stock In':'Stock Out'}</td><td>${num(m.amount)}</td><td>₹${num(m.rate)}</td><td>${esc(m.note||'')}</td></tr>`}).join('')||'<tr><td colspan="6">లావాదేవీలు లేవు.</td></tr>';
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function delProduct(id){if(confirm('ఈ వస్తువును తొలగించాలా?')){db.products=db.products.filter(p=>p.id!==id);save()}}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.remove('hidden')});
+document.getElementById('productForm').onsubmit=e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));db.products.push({...d,id:crypto.randomUUID(),opening:Number(d.opening),minimum:Number(d.minimum),buy:Number(d.buy),sell:Number(d.sell)});e.target.reset();save();alert('వస్తువు సేవ్ అయింది')};
+document.getElementById('moveForm').onsubmit=e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target)),p=db.products.find(p=>p.id===d.product),a=Number(d.amount);if(!p)return alert('ముందుగా వస్తువును నమోదు చేయండి');if(d.kind==='OUT'&&a>balance(p))return alert('మిగిలిన స్టాక్ సరిపోదు');db.moves.push({pid:p.id,kind:d.kind,amount:a,rate:Number(d.rate),date:d.date,note:d.note});e.target.reset();e.target.date.value=new Date().toISOString().slice(0,10);save();alert('ఎంట్రీ సేవ్ అయింది')};
+document.getElementById('moveForm').date.value=new Date().toISOString().slice(0,10);
+function download(name,data,type){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
+document.getElementById('export').onclick=()=>download('venkat-stock-backup.json',JSON.stringify(db,null,2),'application/json');
+document.getElementById('restore').onchange=async e=>{try{let d=JSON.parse(await e.target.files[0].text());if(!Array.isArray(d.products)||!Array.isArray(d.moves))throw 0;if(confirm('ప్రస్తుత డేటా స్థానంలో బ్యాకప్ డేటా పెట్టాలా?')){db=d;save();alert('బ్యాకప్ తిరిగి లోడ్ అయింది')}}catch{alert('ఈ బ్యాకప్ ఫైల్ సరైనది కాదు')}};
+document.getElementById('csv').onclick=()=>{let rows=[['Date','Product','Type','Quantity','Rate','Note'],...db.moves.map(m=>[m.date,db.products.find(p=>p.id===m.pid)?.name||'',m.kind,m.amount,m.rate,m.note||''])];download('venkat-stock-report.csv','\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv;charset=utf-8')};
+render();
+</script></body></html>
